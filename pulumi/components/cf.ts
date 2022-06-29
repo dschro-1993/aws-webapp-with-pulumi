@@ -11,7 +11,7 @@ const responseHeadersPolicy = new aws.cloudfront.ResponseHeadersPolicy('response
   },
 });
 
-new aws.cloudfront.Distribution('distribution', {
+export const webDistribution = new aws.cloudfront.Distribution('distribution', {
   origins: buckets.map((bucket) => ({
     domainName: bucket.bucketRegionalDomainName,
     originId:   bucket.bucket, // 's3-origin'

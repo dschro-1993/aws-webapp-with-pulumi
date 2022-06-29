@@ -12,6 +12,6 @@ const providers: aws.Provider[] = regions.map((region) => new aws.Provider(`${re
  * ]
 */
 
-const zipped = regions.map((region, i) => ({region, provider: providers[i]}));
+const pzipped = regions.map((region, i) => ({region, provider: providers[i]}));
 
-export {zipped};
+export {pzipped};

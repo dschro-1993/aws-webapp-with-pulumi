@@ -2,7 +2,7 @@ import * as pulumi from '@pulumi/pulumi';
 import * as aws from '@pulumi/aws';
 
 import {originAccessIdentity} from './oai';
-import {zipped} from './providers';
+import {pzipped} from './providers';
 
 const publicReadPolicy = (bucketName: string, iamArn: string): string => {
   return JSON.stringify({
@@ -55,7 +55,7 @@ const createBucket = (region: string, provider: aws.Provider): aws.s3.Bucket => 
     `${region}-bucket`,
     {
       // Todo: Maybe add UUIDs? 64 chars limited ...
-      bucket:  `${region}-react-app-zbucket`,
+      bucket:  `${region}-1212121212-bucket`,
       website: {indexDocument: 'index.html'},
     },
     {provider},
@@ -75,7 +75,7 @@ const build = sync('../build/**/*');
 type  Asset = {name: string, path: string};
 const assets: Asset[] = build.map((asset) => ({name: asset.slice(9), path: asset}));
 
-const buckets = zipped.map((obj) => {
+const buckets = pzipped.map((obj) => {
   return putTogether(obj.region, obj.provider, originAccessIdentity.iamArn, assets);
 });
 
