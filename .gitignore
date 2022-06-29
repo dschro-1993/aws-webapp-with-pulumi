@@ -3,5 +3,8 @@
 # deps
 **/node_modules
 
+# jest
+**/coverage
+
 # live
 **/build
