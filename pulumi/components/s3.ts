@@ -23,7 +23,7 @@ const publicReadPolicy = (bucketName: string, iamArn: string): string => {
 
 const mimeTypesss = require('mime-types');
 
-const createAssets = (region: string, provider: aws.Provider, bucket: aws.s3.Bucket, assets: Asset[]): void => {
+const createAssets = (region: string, bucket: aws.s3.Bucket, assets: Asset[], options: pulumi.CustomResourceOptions): void => {
   for (const asset of assets) {
     const contentType = mimeTypesss.lookup(asset.path);
     new aws.s3.BucketObject(
@@ -34,19 +34,19 @@ const createAssets = (region: string, provider: aws.Provider, bucket: aws.s3.Buc
         contentType,
         bucket,
       },
-      {provider},
+      options,
     );
   }
 };
 
-const attachPolicy = (region: string, provider: aws.Provider, bucket: aws.s3.Bucket, iamArn: pulumi.Output<string>): void => {
+const attachPolicy = (region: string, bucket: aws.s3.Bucket, iamArn: pulumi.Output<string>, options: pulumi.CustomResourceOptions): void => {
   new aws.s3.BucketPolicy(
     `${region}-bucket-policy`,
     {
       policy: pulumi.all([bucket.bucket, iamArn]).apply(([bucketName, iamArn]) => publicReadPolicy(bucketName, iamArn)),
       bucket: bucket.bucket,
     },
-    {provider},
+    options,
   );
 };
 
@@ -64,8 +64,9 @@ const createBucket = (region: string, provider: aws.Provider): aws.s3.Bucket => 
 
 const putTogether = (region: string, provider: aws.Provider, iamArn: pulumi.Output<string>, assets: Asset[]): aws.s3.Bucket => {
   const bucket = createBucket(region, provider);
-  attachPolicy(region, provider, bucket, iamArn);
-  createAssets(region, provider, bucket, assets);
+  const childOptions: pulumi.CustomResourceOptions = {provider, parent: bucket};
+  attachPolicy(region, bucket, iamArn, childOptions);
+  createAssets(region, bucket, assets, childOptions);
   return bucket;
 };
 
