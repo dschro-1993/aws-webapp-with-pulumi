@@ -1,0 +1,6 @@
+name: react-app
+description: A blueprint for AWS webapp deployments
+runtime: nodejs
+backend:
+  url: s3://pulumi-1222dc7c-6416-4274-9f42-835529ff4236
+main: pulumi/
